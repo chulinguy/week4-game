@@ -1,0 +1,17 @@
+div {
+  outline: 1px solid red;  
+}
+
+h2 {
+  font-size: 20px; 
+  text-align: center;
+}
+
+.char {
+  border: 4px solid green;
+  height: 100px; 
+}
+
+.chosen {
+  width: 100%;
+}
