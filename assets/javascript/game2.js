@@ -1,27 +1,44 @@
 //Game settings & data
 var app = {};
 //Game trackers
-  //check for 1st phase of selecting your character
+  //state checker for 1st phase of selecting your character
   app.goNoGoSC = true; 
-  //check for 1st phase of selecting your enemy
+  //state checker for 2nd phase of selecting your enemy
   app.goNoGoSE = false;  
   //number of defeated enemies
   app.defeatedEnemies = 0; 
+//era-selecting function
+app.hideDifferentEra = function (era) {
+  console.log('hiding characters from different era, current era is', era)
+  $('.char').each(function () {
+     if ($(this).hasClass(era)) {
+     } else {
+      console.log(`hiding ${this}`)
+      $(this).addClass('hidden');
+     }
+  })
+}
+
 //character data
 app.charList = {};
-  app.charList["Young Obi-Wan Kenobi"] = [6,12,150];
-  app.charList["Mace Windu"] = [8,16,120];
-  app.charList["Darth Maul"] = [10,8,140];
-  app.charList["Count Dooku"] = [12,10,110];
+  app.charList["Young Obi-Wan Kenobi"] = [6,14,150, 'prequels'];
+  app.charList["Mace Windu"] = [8,18,120, 'prequels'];
+  app.charList["Darth Maul"] = [10,10,140, 'prequels'];
+  app.charList["Count Dooku"] = [12,12,110, 'prequels'];
+  app.charList["Luke Skywalker"] = [6,14,150, 'original trilogy'];
+  app.charList["Old Obi-Wan Kenobi"] = [8,18,120, 'original trilogy'];
+  app.charList["Darth Vader"] = [10,10,140, 'original trilogy'];
+  app.charList["Old Darth Sidious"] = [12,12,110, 'original trilogy'];
 
 //pseudoclassical pattern to construct Star Wars character objects
-var SWcharConstructor = function (name, baseAP, CAP, baseHP){
+var SWcharConstructor = function (name, baseAP, CAP, baseHP, era){
   this.name = name; 
   this.baseAP = baseAP;
   this.nowAP = baseAP; 
   this.CAP = CAP;
   this.baseHP = baseHP;
   this.nowHP = baseHP; 
+  this.era = era; 
 }
 //game logic for the 'attack' method
 SWcharConstructor.prototype.attack = function (enemy){
@@ -29,8 +46,7 @@ SWcharConstructor.prototype.attack = function (enemy){
   this.nowAP += this.baseAP; 
   enemy.nowHP -= oldAP;
   this.nowHP -= enemy.CAP;  
-  console.log(`You takes ${enemy.CAP} damages and has ${this.nowHP} health left`);
-  console.log(`${enemy.name} takes ${oldAP} damages and has ${enemy.nowHP} health left`);
+  $('#fight-text').text(`You take ${enemy.CAP} damages and have ${this.nowHP} health left\n${enemy.name} takes ${oldAP} damages and has ${enemy.nowHP} health left`);
 }
 
 //instantiating each SW character 
@@ -51,10 +67,13 @@ app.initialize = function (){
   this.goNoGoSE = false; 
   this.defeatedEnemies = 0;  
 
-  //Clear all on-screen characters and restart button 
+  //Clear all on-screen characters, fight-text, restart button 
   $('.char').remove();
+  $('#fight-text').text();
   $('#startOver').css('display', 'none');
-
+  $('#fight-text').text(`Pick your character!\nHint: in general, younger characters have more HP and older characters have more attack and counter-attack power;\nSiths have more attack power and Jedis have more counter-attack power.`)
+  //remove the hidden class
+  $('.char').removeClass('hidden');
   //Render all chars for user to choose from
   console.log('Rendering all characters for user to choose from')  
     //spacer helper function for Bootstrap
@@ -65,15 +84,18 @@ app.initialize = function (){
       $('#char-select').append(spacerDiv);
     }
   //Rendering logic
-  spacer();  
-  _.each(app.SWcharObj, (v) => {
+  // spacer();  
+  _.each(that.SWcharObj, (v) => {
     var charToChoose = $('<div>');
     charToChoose.addClass('char col-xs-6 col-sm-3 col-md-2');
+    charToChoose.addClass(v.era)
     charToChoose.css({'border': '4px solid green'});
     charToChoose.attr('data', v.name);
+    //adds character names to divs
     var nameh3 = $('<h3 class="char-name">');
     nameh3.text(v.name);
     charToChoose.append(nameh3);
+    //adds HP to divs
     var HPh3 = $('<h3 class="HP">');
     HPh3.text(v.nowHP);
     charToChoose.append(HPh3);
@@ -82,13 +104,22 @@ app.initialize = function (){
       console.log($(this).attr('data'), 'is being clicked!')
       //logic for selecting a character to be your character
       if (that.goNoGoSC) {
+        //move chosen characters
         $(this).addClass('chosen');
         $('#your-char').append($(this));
+        //move non chosen charaters
         var remainingChars = $('#char-select').find('.char');
         remainingChars.css({'border-color': 'yellow', 'background-color': 'red'});
         remainingChars.addClass('not-chosen');
         remainingChars.appendTo('#enemies');
-        $('.spacer').css({'background-color': 'white', 'border': 'none'})
+        //Hide characters from a different era
+        var nowEra = that.SWcharObj[$(this).attr('data')].era;
+        that.hideDifferentEra(nowEra);
+        //update colors and fight-text
+        $('.spacer').css({'background-color': 'white', 'border': 'none'});
+        //FIX
+        $('#fight-text').text(`Based on your choice, only characters from the ${nowEra} era are shown.\nPick your enemy!`);
+        //update state checkers
         that.goNoGoSC = false;  
         that.goNoGoSE = true; 
       } 
@@ -99,13 +130,15 @@ app.initialize = function (){
           $(this).removeClass('not-chosen');
           $(this).css({'border-color': 'green', 'background-color': 'lightblue'});
           $('#your-enemy').append($(this));
+          $('#fight-text').text('Let the fight begin!')
+          //update state checker
           that.goNoGoSE = false; 
         }
       }
     })
     $('#char-select').append(charToChoose);
   })
-  spacer(); 
+  // spacer(); 
 }
 //logic for initializing
 $('#startOver').toggle();
@@ -124,23 +157,22 @@ $('#attack').on('click', function(){
     $('#your-enemy > .chosen').find('.HP').text( app.SWcharObj[enemyName].nowHP);
     //losing condition
     if (app.SWcharObj[yourName].nowHP < 1){
-      //FIX!!!
-      console.log('you lose');
+      $('fight-text').text('you lose');
       $('#startOver').toggle();
     } 
     //Moving onto next enemy condition
     else if (app.SWcharObj[enemyName].nowHP < 1){
-      console.log(`you defeated ${enemyName}`)
-       $('#your-enemy > .chosen').remove();
+      $('fight-text').text(`you defeated ${enemyName}\nPick your next enemy!`);
+      $('#your-enemy > .chosen').remove();
       app.goNoGoSE = true; 
       app.defeatedEnemies ++; 
+      //Win condition
       if (app.defeatedEnemies === 3){
-        //FIX!!
-        console.log('you win!')
+        $('fight-text').text('You win!')
         $('#startOver').toggle();
       } 
     }
   }
 })
-
+//Restart button logic
 $('#startOver').on('click', () => (app.initialize()));

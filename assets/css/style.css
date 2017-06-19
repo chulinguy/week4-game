@@ -1,3 +1,8 @@
+body {
+  background: url(../images/background.jpg);
+  background-size: 100%, auto;
+}
+
 div {
   outline: 1px solid red;  
 }
@@ -5,21 +10,39 @@ div {
 h2 {
   font-size: 20px; 
   text-align: center;
+  color: orange;
+}
+
+span {
+  background-color: white;
 }
 
 h3 {
   font-size: 16px;
   text-align: center;
+  color:gray;
 }
 
 .char {
-  height: 100px; 
+  height: 100px;
+  background-color: white; 
 }
 
 .chosen {
   width: 100%;
 }
 
+.hidden {
+  display: none;
+}
+
+
 #startOver {
   text-align: center;
+}
+
+@media only screen and (max-width : 991px) {
+  .spacer {
+    display: none;
+  }
 }
