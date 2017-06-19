@@ -46,7 +46,7 @@ SWcharConstructor.prototype.attack = function (enemy){
   this.nowAP += this.baseAP; 
   enemy.nowHP -= oldAP;
   this.nowHP -= enemy.CAP;  
-  $('#fight-text').text(`You take ${enemy.CAP} damages and have ${this.nowHP} health left\n${enemy.name} takes ${oldAP} damages and has ${enemy.nowHP} health left`);
+  $('#fight-text').text(`You take ${enemy.CAP} damages and have ${this.nowHP} health left ... ${enemy.name} takes ${oldAP} damages and has ${enemy.nowHP} health left`);
 }
 
 //instantiating each SW character 
@@ -87,17 +87,21 @@ app.initialize = function (){
   // spacer();  
   _.each(that.SWcharObj, (v) => {
     var charToChoose = $('<div>');
-    charToChoose.addClass('char col-xs-6 col-sm-3 col-md-2');
+    charToChoose.addClass('char col-xs-6 col-sm-3');
     charToChoose.addClass(v.era)
     charToChoose.css({'border': '4px solid green'});
     charToChoose.attr('data', v.name);
+    //adds images to divs
+    var SWcharIMG = $('<img>');
+    SWcharIMG.attr('src', `assets/images/${v.name}.png`)
+    charToChoose.append(SWcharIMG);
     //adds character names to divs
     var nameh3 = $('<h3 class="char-name">');
     nameh3.text(v.name);
     charToChoose.append(nameh3);
     //adds HP to divs
     var HPh3 = $('<h3 class="HP">');
-    HPh3.text(v.nowHP);
+    HPh3.text(`${v.nowHP} HP`);
     charToChoose.append(HPh3);
     //adds on-click event listener to each character
     charToChoose.on('click', function() {
@@ -109,7 +113,7 @@ app.initialize = function (){
         $('#your-char').append($(this));
         //move non chosen charaters
         var remainingChars = $('#char-select').find('.char');
-        remainingChars.css({'border-color': 'yellow', 'background-color': 'red'});
+        remainingChars.css({'border-color': 'yellow', 'background-color': 'pink'});
         remainingChars.addClass('not-chosen');
         remainingChars.appendTo('#enemies');
         //Hide characters from a different era
@@ -153,11 +157,11 @@ $('#attack').on('click', function(){
     //calling the attack method
     (app.SWcharObj[yourName]).attack(app.SWcharObj[enemyName]);
     //update HPs displayed
-    $('#your-char > .chosen').find('.HP').text( app.SWcharObj[yourName].nowHP);
-    $('#your-enemy > .chosen').find('.HP').text( app.SWcharObj[enemyName].nowHP);
+    $('#your-char > .chosen').find('.HP').text( `${app.SWcharObj[yourName].nowHP} HP`);
+    $('#your-enemy > .chosen').find('.HP').text( `${app.SWcharObj[enemyName].nowHP} HP`);
     //losing condition
     if (app.SWcharObj[yourName].nowHP < 1){
-      $('fight-text').text('you lose');
+      $('#fight-text').text('You lose! Press the Restart Button to start a new game');
       $('#startOver').toggle();
     } 
     //Moving onto next enemy condition
@@ -168,7 +172,7 @@ $('#attack').on('click', function(){
       app.defeatedEnemies ++; 
       //Win condition
       if (app.defeatedEnemies === 3){
-        $('fight-text').text('You win!')
+        $('#fight-text').text('You win! Press the Restart Button to start a new game')
         $('#startOver').toggle();
       } 
     }
