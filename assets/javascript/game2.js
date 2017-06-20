@@ -72,7 +72,7 @@ app.initialize = function (){
   $('.char').remove();
   $('#fight-text').text();
   $('#startOver').css('display', 'none');
-  $('#fight-text').text(`Pick your character!\nHint: in general, younger characters have more HP and older characters have more attack and counter-attack power;\nSiths have more attack power and Jedis have more counter-attack power.`)
+  $('#fight-text').text(`Pick your character by clicking a character's picture! Hint: in general, younger characters have more HP and older characters have more attack and counter-attack power;\nSiths have more attack power and Jedis have more counter-attack power.`)
   //remove the hidden class
   $('.char').removeClass('hidden');
   //Render all chars for user to choose from
@@ -132,7 +132,7 @@ app.initialize = function (){
           $(this).css({'border-color': 'green', 'background-color': 'lightblue'});
           $('#your-enemy').append($(this));
           //update fight text
-          $('#fight-text').text('Let the fight begin!')
+          $('#fight-text').text('Let the fight begin! Click the Attack Button')
           //update state checker
           that.goNoGoSE = false; 
         }

@@ -72,8 +72,3 @@ button {
   text-align: center;
 }
 
-@media only screen and (max-width : 991px) {
-  .spacer {
-    display: none;
-  }
-}
