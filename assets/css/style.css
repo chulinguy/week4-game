@@ -16,6 +16,7 @@ h2 {
   text-align: center;
   color: black;
   margin-top: 10px;
+  font-weight: bold;
 }
 
 span {
@@ -40,6 +41,11 @@ img {
   float: left;
 }
 
+button {
+  padding: 8px;
+  font-size: 20px;
+}
+
 .char {
   height: 150px;
   background-color: white; 
@@ -58,7 +64,7 @@ img {
   padding: 0;
 }
 
-.HP {
+.HP, .char-attack {
   margin-top: 10px;
 }
 

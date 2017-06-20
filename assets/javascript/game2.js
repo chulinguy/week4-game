@@ -21,17 +21,17 @@ app.hideDifferentEra = function (era) {
 
 //character data
 app.charList = {};
-  app.charList["Young Obi-Wan Kenobi"] = [6,14,150, 'prequels'];
-  app.charList["Mace Windu"] = [8,18,120, 'prequels'];
-  app.charList["Darth Maul"] = [10,10,140, 'prequels'];
-  app.charList["Count Dooku"] = [12,12,110, 'prequels'];
-  app.charList["Luke Skywalker"] = [6,14,150, 'original trilogy'];
-  app.charList["Old Obi-Wan Kenobi"] = [8,18,120, 'original trilogy'];
-  app.charList["Darth Vader"] = [10,10,140, 'original trilogy'];
-  app.charList["Old Darth Sidious"] = [12,12,110, 'original trilogy'];
+  app.charList["Young Obi-Wan Kenobi"] = [6,14,150, 'prequels', 'Attack: lightsaber (Form IV Ataru)'];
+  app.charList["Mace Windu"] = [8,18,120, 'prequels', 'Attack: lightsaber (Form VII Vaapad)'];
+  app.charList["Darth Maul"] = [10,10,140, 'prequels', 'Attack: lightsaber (Form VI Niman)'];
+  app.charList["Count Dooku"] = [12,12,110, 'prequels', 'Attack: lightsaber (Form II Makashi)'];
+  app.charList["Luke Skywalker"] = [7,15,145, 'original trilogy', 'Attack: lightsaber (Form V Djem So)'];
+  app.charList["Old Obi-Wan Kenobi"] = [8,19,115, 'original trilogy', 'Attack: lightsaber (Form III Soresu)'];
+  app.charList["Darth Vader"] = [11,10,130, 'original trilogy', 'Attack: lightsaber (Form V Djem So)'];
+  app.charList["Old Darth Sidious"] = [13,12,105, 'original trilogy', 'Attack: Force Lightning'];
 
 //pseudoclassical pattern to construct Star Wars character objects
-var SWcharConstructor = function (name, baseAP, CAP, baseHP, era){
+var SWcharConstructor = function (name, baseAP, CAP, baseHP, era, form){
   this.name = name; 
   this.baseAP = baseAP;
   this.nowAP = baseAP; 
@@ -39,6 +39,7 @@ var SWcharConstructor = function (name, baseAP, CAP, baseHP, era){
   this.baseHP = baseHP;
   this.nowHP = baseHP; 
   this.era = era; 
+  this.form = form;
 }
 //game logic for the 'attack' method
 SWcharConstructor.prototype.attack = function (enemy){
@@ -76,15 +77,7 @@ app.initialize = function (){
   $('.char').removeClass('hidden');
   //Render all chars for user to choose from
   console.log('Rendering all characters for user to choose from')  
-    //spacer helper function for Bootstrap
-    function spacer() {
-      var spacerDiv = $('<div>');
-      spacerDiv.addClass('col-md-2 char spacer');
-      
-      $('#char-select').append(spacerDiv);
-    }
   //Rendering logic
-  // spacer();  
   _.each(that.SWcharObj, (v) => {
     var charToChoose = $('<div>');
     charToChoose.addClass('char col-xs-6 col-sm-3');
@@ -95,10 +88,14 @@ app.initialize = function (){
     var SWcharIMG = $('<img>');
     SWcharIMG.attr('src', `assets/images/${v.name}.png`)
     charToChoose.append(SWcharIMG);
-    //adds character names to divs
+     //adds character names to divs
     var nameh3 = $('<h3 class="char-name">');
     nameh3.text(v.name);
     charToChoose.append(nameh3);
+    //adds attack form names to divs
+    var formh3 = $('<h3 class="char-attack">');
+    formh3.text(v.form);
+    charToChoose.append(formh3);
     //adds HP to divs
     var HPh3 = $('<h3 class="HP">');
     HPh3.text(`${v.nowHP} HP`);
@@ -134,6 +131,7 @@ app.initialize = function (){
           $(this).removeClass('not-chosen');
           $(this).css({'border-color': 'green', 'background-color': 'lightblue'});
           $('#your-enemy').append($(this));
+          //update fight text
           $('#fight-text').text('Let the fight begin!')
           //update state checker
           that.goNoGoSE = false; 
@@ -142,7 +140,6 @@ app.initialize = function (){
     })
     $('#char-select').append(charToChoose);
   })
-  // spacer(); 
 }
 //logic for initializing
 $('#startOver').toggle();
