@@ -119,7 +119,7 @@ app.initialize = function (){
         //update colors and fight-text
         $('.spacer').css({'background-color': 'white', 'border': 'none'});
         //FIX
-        $('#fight-text').text(`Based on your choice, only characters from the ${nowEra} era are shown.\nPick your enemy!`);
+        $('#fight-text').text(`Based on your selection, only characters from the ${nowEra} era are shown.\nPick your enemy character!`);
         //update state checkers
         that.goNoGoSC = false;  
         that.goNoGoSE = true; 
@@ -158,18 +158,18 @@ $('#attack').on('click', function(){
     $('#your-enemy > .chosen').find('.HP').text( `${app.SWcharObj[enemyName].nowHP} HP`);
     //losing condition
     if (app.SWcharObj[yourName].nowHP < 1){
-      $('#fight-text').text('You lose! Press the Restart Button to start a new game');
+      $('#fight-text').text('Oh no! You lost all your HP! Press the Restart Button to start a new game');
       $('#startOver').toggle();
     } 
     //Moving onto next enemy condition
     else if (app.SWcharObj[enemyName].nowHP < 1){
-      $('fight-text').text(`you defeated ${enemyName}\nPick your next enemy!`);
+      $('#fight-text').text(`you defeated ${enemyName}! Pick your next enemy!`);
       $('#your-enemy > .chosen').remove();
       app.goNoGoSE = true; 
       app.defeatedEnemies ++; 
       //Win condition
       if (app.defeatedEnemies === 3){
-        $('#fight-text').text('You win! Press the Restart Button to start a new game')
+        $('#fight-text').text('You defeated all enemies and won! Press the Restart Button to start a new game')
         $('#startOver').toggle();
       } 
     }
